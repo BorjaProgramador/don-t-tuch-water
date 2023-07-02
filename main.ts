@@ -1,16 +1,12 @@
-namespace SpriteKind {
-    export const piso = SpriteKind.create()
-    export const pared = SpriteKind.create()
-}
 function makelevel () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
     list = [
-    tilemap`level3`,
-    tilemap`nivel5`,
-    tilemap`level10`,
-    tilemap`level5`,
+    tilemap`level15`,
+    tilemap`level14`,
+    tilemap`level16`,
+    tilemap`level17`,
     tilemap`level0`,
-    tilemap`you win`
+    tilemap`level26`
     ]
     tiles.setCurrentTilemap(list[levelnub])
     tiles.placeOnRandomTile(mySprite, sprites.builtin.brick)
@@ -21,20 +17,20 @@ function makelevel () {
             ........................
             ..........ffff..........
             ........ff1111ff........
-            .......f61111116f.......
-            .......f111111196f......
-            ......f9111111199f......
-            ......f9111111999f......
-            ......f9111999999f......
-            ......f9111999999f......
-            ......f9199999996f......
-            ......f919f69966ff......
-            ......f699f89668f.......
-            ......f6999996fff.......
-            ......ff688f8ffff.......
-            .......fffffffffff......
-            ...........ffffffffff...
-            .............ffffff.....
+            .......fb111111bf.......
+            .......f1111111dbf......
+            ......fd1111111ddf......
+            ......fd111111dddf......
+            ......fd111ddddddf......
+            ......fd111ddddddf......
+            ......fd1dddddddbf......
+            ......fd1dfbddbbff......
+            ......fbddfcdbbcf.......
+            .....ffffccddbfff.......
+            ....fcb1bbbfcffff.......
+            ....f1b1dcffffffff......
+            ....fdfdf..ffffffffff...
+            .....f.f.....ffffff.....
             ........................
             ........................
             ........................
@@ -45,29 +41,46 @@ function makelevel () {
         e.ay = 500
         e.vx = 50
     }
-    tileUtil.replaceAllTiles(sprites.builtin.brick, assets.tile`myTile4`)
-    tileUtil.replaceAllTiles(assets.tile`myTile0`, assets.tile`transparency16`)
-    tileUtil.replaceAllTiles(sprites.builtin.forestTiles0, assets.tile`transparency16`)
+    tileUtil.coverAllTiles(assets.tile`myTile0`, assets.tile`transparency16`)
+    tileUtil.coverAllTiles(sprites.builtin.brick, assets.tile`transparency16`)
+    tileUtil.coverAllTiles(sprites.builtin.brick, assets.tile`transparency16`)
 }
-scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile3`, function (sprite, location) {
-    makelevel()
+scene.onOverlapTile(SpriteKind.Player, sprites.builtin.forestTiles0, function (sprite, location) {
+    game.gameOver(true)
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (mySprite.isHittingTile(CollisionDirection.Bottom)) {
         mySprite.vy = -200
     }
 })
+scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile3`, function (sprite, location) {
+    info.changeCountdownBy(-2)
+    info.changeLifeBy(-1)
+    makelevel()
+})
+info.onCountdownEnd(function () {
+    game.gameOver(false)
+    game.setGameOverMessage(false, "The Time")
+})
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.chestClosed, function (sprite, location) {
     levelnub += 1
+    info.changeCountdownBy(10)
+    info.changeLifeBy(1)
     makelevel()
+})
+info.onLifeZero(function () {
+    game.gameOver(false)
+    game.setGameOverMessage(false, "You tuch water")
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     makelevel()
 })
+let e: Sprite = null
 let list: tiles.TileMapData[] = []
 let levelnub = 0
-let e: Sprite = null
 let mySprite: Sprite = null
+info.setLife(3)
+info.startCountdown(30)
 scene.setBackgroundImage(img`
     7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777
     7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777
@@ -192,57 +205,9 @@ scene.setBackgroundImage(img`
     `)
 mySprite = sprites.create(assets.image`myImage`, SpriteKind.Player)
 controller.moveSprite(mySprite, 100, 0)
-characterAnimations.loopFrames(
-mySprite,
-[img`
-    . . . . e e e . . . . e e e 
-    . . . . c d d c . . c d d c 
-    . . . . c b d d f f d d b c 
-    . . . . c 3 b d b d d b 3 c 
-    . . . . f b 3 d d d d 3 b f 
-    . . . . e d d d d d d d d e 
-    b f b . e d f d d d d f d e 
-    f d f . f d d f d d f d d f 
-    f d f . f 2 d d b b d d b f 
-    f d f f b b 2 2 2 2 2 2 f . 
-    f b d b b d d d d d d b f . 
-    . f f f d d b d d d d d f . 
-    . . . f d f f d f f f d f . 
-    . . . f f . . f f . . f f . 
-    `,img`
-    . . . . . . . . . . . . . . 
-    . . . . e e e . . . . e e e 
-    . . . . c d d c . . c d d c 
-    . . . . c b d d f f d d b c 
-    . . . . c 3 b d b d d b 3 c 
-    . . . . f b 3 d d d d 3 b f 
-    . . . . e d d d d d d d d e 
-    . b f b e d f d d d d f d e 
-    . f d f f d d f d d f d d f 
-    . f d f b 2 d d b b d d b f 
-    . f b d b d 2 2 2 2 2 2 f . 
-    . . f f f d d d d d d d f . 
-    . . . . f d f f f d b d f . 
-    . . . . f f . . f f f f . . 
-    `,img`
-    . . . . . . . . . . . . . . 
-    . . . . e e e . . . . e e e 
-    . . . . c d d c . . c d d c 
-    . . . . c b d d f f d d b c 
-    . . . . c 3 b d b d d b 3 c 
-    . . . . f b 3 d d d d 3 b f 
-    . . . . e d d d d d d d d e 
-    b f b . e d f d d d d f d e 
-    f d f . f d d f d d f d d f 
-    f d f f b 2 d d b b d d b f 
-    f b d b b d 2 2 2 2 2 2 f . 
-    . f f f f d d d d d d d f . 
-    . . . . . f d f d b d f . . 
-    . . . . . f f f f f f . . . 
-    `],
-100,
-characterAnimations.rule(Predicate.MovingRight, Predicate.HittingWallDown)
-)
+mySprite.ay = 500
+scene.cameraFollowSprite(mySprite)
+levelnub = 0
 characterAnimations.loopFrames(
 mySprite,
 [img`
@@ -297,6 +262,57 @@ characterAnimations.rule(Predicate.MovingLeft, Predicate.HittingWallDown)
 characterAnimations.loopFrames(
 mySprite,
 [img`
+    . . . . e e e . . . . e e e 
+    . . . . c d d c . . c d d c 
+    . . . . c b d d f f d d b c 
+    . . . . c 3 b d b d d b 3 c 
+    . . . . f b 3 d d d d 3 b f 
+    . . . . e d d d d d d d d e 
+    b f b . e d f d d d d f d e 
+    f d f . f d d f d d f d d f 
+    f d f . f 2 d d b b d d b f 
+    f d f f b b 2 2 2 2 2 2 f . 
+    f b d b b d d d d d d b f . 
+    . f f f d d b d d d d d f . 
+    . . . f d f f d f f f d f . 
+    . . . f f . . f f . . f f . 
+    `,img`
+    . . . . . . . . . . . . . . 
+    . . . . e e e . . . . e e e 
+    . . . . c d d c . . c d d c 
+    . . . . c b d d f f d d b c 
+    . . . . c 3 b d b d d b 3 c 
+    . . . . f b 3 d d d d 3 b f 
+    . . . . e d d d d d d d d e 
+    . b f b e d f d d d d f d e 
+    . f d f f d d f d d f d d f 
+    . f d f b 2 d d b b d d b f 
+    . f b d b d 2 2 2 2 2 2 f . 
+    . . f f f d d d d d d d f . 
+    . . . . f d f f f d b d f . 
+    . . . . f f . . f f f f . . 
+    `,img`
+    . . . . . . . . . . . . . . 
+    . . . . e e e . . . . e e e 
+    . . . . c d d c . . c d d c 
+    . . . . c b d d f f d d b c 
+    . . . . c 3 b d b d d b 3 c 
+    . . . . f b 3 d d d d 3 b f 
+    . . . . e d d d d d d d d e 
+    b f b . e d f d d d d f d e 
+    f d f . f d d f d d f d d f 
+    f d f f b 2 d d b b d d b f 
+    f b d b b d 2 2 2 2 2 2 f . 
+    . f f f f d d d d d d d f . 
+    . . . . . f d f d b d f . . 
+    . . . . . f f f f f f . . . 
+    `],
+100,
+characterAnimations.rule(Predicate.MovingRight, Predicate.HittingWallDown)
+)
+characterAnimations.runFrames(
+mySprite,
+[img`
     e e e . . . . e e e . . . . 
     c d d c . . c d d c . . . . 
     c b d d f f d d b c . . . . 
@@ -312,10 +328,10 @@ mySprite,
     . f d f f f d f f d f . . . 
     . f f . . f f . . f f . . . 
     `],
-100,
-characterAnimations.rule(Predicate.FacingLeft, Predicate.NotMoving)
+500,
+characterAnimations.rule(Predicate.NotMoving, Predicate.FacingLeft)
 )
-characterAnimations.loopFrames(
+characterAnimations.runFrames(
 mySprite,
 [img`
     . . . . e e e . . . . e e e 
@@ -333,43 +349,19 @@ mySprite,
     . . . f d f f d f f f d f . 
     . . . f f . . f f . . f f . 
     `],
-100,
-characterAnimations.rule(Predicate.FacingRight, Predicate.NotMoving)
+500,
+characterAnimations.rule(Predicate.NotMoving, Predicate.FacingRight)
 )
-characterAnimations.loopFrames(
-e,
-[img`
-    . . . . e e e . . . . e e e 
-    . . . . c d d c . . c d d c 
-    . . . . c b d d f f d d b c 
-    . . . . c 3 b d b d d b 3 c 
-    . . . . f b 3 d d d d 3 b f 
-    . . . . e d d d d d d d d e 
-    b f b . e d f d d d d f d e 
-    f d f . f d d f d d f d d f 
-    f d f . f 2 d d b b d d b f 
-    f d f f b b 2 2 2 2 2 2 f . 
-    f b d b b d d d d d d b f . 
-    . f f f d d b d d d d d f . 
-    . . . f d f f d f f f d f . 
-    . . . f f . . f f . . f f . 
-    `],
-100,
-characterAnimations.rule(Predicate.MovingRight, Predicate.NotMoving)
-)
-mySprite.ay = 500
-scene.cameraFollowSprite(mySprite)
-levelnub = 0
 makelevel()
 forever(function () {
-    music.play(music.stringPlayable("C D F E E E G C ", 150), music.PlaybackMode.UntilDone)
+    music.play(music.stringPlayable("C E F F E E D C ", 150), music.PlaybackMode.UntilDone)
 })
 forever(function () {
     for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
         if (tiles.tileAtLocationIsWall(value.tilemapLocation().getNeighboringLocation(CollisionDirection.Left))) {
-            value.vx = 50
+            e.vx = 50
         } else if (tiles.tileAtLocationIsWall(value.tilemapLocation().getNeighboringLocation(CollisionDirection.Right))) {
-            value.vx = -50
+            e.vx = -50
         }
     }
 })

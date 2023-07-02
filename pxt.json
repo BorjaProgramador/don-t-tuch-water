@@ -5,7 +5,8 @@
         "device": "*",
         "arcade-tile-util": "github:microsoft/arcade-tile-util#v1.0.1",
         "arcade-character-animations": "github:microsoft/arcade-character-animations#v0.0.2",
-        "Timers": "github:microsoft/arcade-timers#v1.1.0"
+        "Timers": "github:microsoft/arcade-timers#v1.1.0",
+        "animation": "*"
     },
     "files": [
         "main.blocks",
@@ -15,13 +16,14 @@
         "images.g.jres",
         "images.g.ts",
         "tilemap.g.jres",
-        "tilemap.g.ts"
+        "tilemap.g.ts",
+        "custom.ts"
     ],
     "testFiles": [
         "test.ts"
     ],
     "targetVersions": {
-        "target": "1.12.30",
+        "target": "1.12.32",
         "targetId": "arcade"
     },
     "supportedTargets": [
